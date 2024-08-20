@@ -1,1 +1,13 @@
-.vs
+# skip all files
+*
+
+# do not ignore file .gitignore and .gitattributes
+!.gitignore
+!.gitattributes
+
+# do not ignore folders, but still ignore content inside
+!*/
+
+# Included file .cs, json
+!*.cs
+!*.json
