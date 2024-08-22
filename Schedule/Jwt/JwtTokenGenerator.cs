@@ -14,16 +14,15 @@ namespace Schedule.Jwt
             _configuration = configuration;
         }
 
-        public string GenerateToken(string username)
+        public string GenerateToken(string userCd)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            List<Claim> claims = new List<Claim>
             {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+                 new Claim(ClaimTypes.Name, userCd),
+             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
