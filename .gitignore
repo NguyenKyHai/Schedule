@@ -1,13 +1,18 @@
-# skip all files
-*
+/node_modules/
+/packages/
+/build/
 
-# do not ignore file .gitignore and .gitattributes
-!.gitignore
-!.gitattributes
+.vs/
+/bin/
+/obj/
+/logs/
+/temp/
 
-# do not ignore folders, but still ignore content inside
-!*/
-
-# Included file .cs, json
-!*.cs
-!*.json
+.DS_Store
+/.pnp/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.lock
+*.bak
