@@ -71,6 +71,13 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCustomForbiddenMiddleware();
 app.UseHttpsRedirection();
+
+app.UseCors(builder =>
+{
+    builder.WithOrigins("http://localhost:3000", "http://localhost:54607", "http://192.168.1.5:100", "https://oms-vista.vn/kintai")
+    .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
