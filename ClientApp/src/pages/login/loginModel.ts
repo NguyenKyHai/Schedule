@@ -4,5 +4,6 @@ export interface LoginRequestModel {
 }
 
 export interface LoginResponseModel {
+    userName : string,
     token: string;
 }

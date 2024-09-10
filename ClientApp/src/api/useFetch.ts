@@ -2,11 +2,14 @@ import { handleResponse, handleError } from "./apiUtils";
 
 const baseUrl = "http://localhost:7072/api/";
 const headerInit: HeadersInit = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
 };
 
-export function getData<T>(url: string): Promise<T> {
-    return fetch(baseUrl + url)
+export function getData<T>(url: string, headers: HeadersInit= headerInit): Promise<T> {
+    return fetch(baseUrl + url, {
+        method: 'GET',
+        headers: headers,
+    })
         .then(handleResponse<T>)
         .catch(handleError);
 }

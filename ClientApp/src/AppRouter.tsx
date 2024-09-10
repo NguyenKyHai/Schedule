@@ -1,7 +1,7 @@
 import { Route, Routes, BrowserRouter } from "react-router-dom"
 import Login from "./pages/login"
 import Schedule from "./pages/schedule"
-import { RequireAuth } from "./components/RequireAuth"
+import { PrivateRoutes } from "./pages/auth/PrivateRoutes"
 
 const AppRouter = () => {
 
@@ -9,12 +9,10 @@ const AppRouter = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/schedule" element={<Schedule />} />
-                    <Route path="/"
-                        element={
-                            <RequireAuth>
-                                <Schedule />
-                            </RequireAuth>} />
+                    <Route element={<PrivateRoutes />}>
+                        <Route path='/' element={<Schedule />} />
+                        <Route path='/schedule' element={<Schedule />} />
+                    </Route>
                     <Route path="/login" element={<Login />} />
                 </Routes>
             </BrowserRouter>

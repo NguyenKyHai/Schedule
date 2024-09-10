@@ -5,42 +5,48 @@ import { LoginRequestModel, LoginResponseModel } from "./loginModel";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
-import { useAppDispatch } from "../../utils/hooks";
-import { login, LoginState } from "./loginSlice";
+import { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import { login, LoginState, logout, selectLoginState } from "../auth/authSlice";
+import { BaseResponse } from "../../utils/responseModel";
+import { isTokenExpired } from "../../utils/tokenUtil";
 
 export default function Login() {
-    const [token, setToken] = useState<string>("");
+    //const [token, setToken] = useState<string>("");
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const state = useAppSelector(selectLoginState);
     const {
         register,
         handleSubmit,
+        resetField,
         formState: { errors },
     } = useForm<LoginRequestModel>()
 
     const onSubmit: SubmitHandler<LoginRequestModel> = (data) => {
         setLoading(true);
-        postData<LoginRequestModel, LoginResponseModel>("login", data)
+        postData<LoginRequestModel, BaseResponse<LoginResponseModel>>("login", data)
             .then((response) => {
-                setToken(response.token);
-                const data: LoginState = {
-                    token: response.token
+                if (!response.hasError) {
+                    const data: LoginState = { ...response?.data as LoginState }
+                    dispatch(login(data))
+                } else {
+                    setError(response?.error.errors[0].messages)
                 }
-                dispatch(login(data))
-                console.log(response.token)
+                console.log(response);
+                resetField('password')
             })
             .finally(() => setLoading(false))
     }
 
     useEffect(() => {
-        if (token !== "" && typeof token !== "undefined") {
+        if (state.token !== null && !isTokenExpired(state.token)) {
             navigate('/schedule', { replace: true });
-        } else if (typeof token === "undefined") {
-            setError("Please check your login ID or password!")
         }
-    }, [token])
+    }, [state.token])
+
+
 
     return (
         <>
