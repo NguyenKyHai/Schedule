@@ -35,15 +35,17 @@ namespace Schedule.Controllers
             var entity = await _webAppContext.Users.Where(x => x.LoginID.Equals(model.LoginId) && x.Password.Equals(model.Password.Encrypt()) && x.StatusFlag == 0).FirstOrDefaultAsync();
             if (entity == null)
             {
-                var msg = "Login name or login password is not correct";
+                var msg = "Login id or login password is not correct";
 
                 ErrorModel error = new ErrorModel();
                 error.Errors = new List<ErrorDetail> { new ErrorDetail { Name = "loginId", Messages = new List<string> { string.Format(msg) } } };
                 var res = new ResponseViewModel<object?>() { HasError = true, Error = error, Data = null };
-                return Ok(new ResponseViewModel<string>() { HasError = true, Error = error });
+                return Ok(res);
             }
+
             string token = _jwtTokenGenerator.GenerateToken(entity.UserCD);
-            return Ok(new { token = token });
+            LoginResModel? resModel = new LoginResModel() { userName = entity.UserName1, token = token };
+            return Ok(new ResponseViewModel<LoginResModel>() { HasError = false, Data = resModel, Error = null });
         }
     }
 }

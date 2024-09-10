@@ -9,7 +9,7 @@
 
     public class ErrorModel
     {
-        public string ErrorType { get; set; } = "MessageText";
+        public string ErrorType { get; set; } = string.Empty;
         public IList<ErrorDetail> Errors { get; set; } = new List<ErrorDetail>();
     }
 
