@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Schedule.Core.Entities;
-using Schedule.Sercurity;
-using System;
 using WebApp.Core.DataAccess;
 
 namespace Schedule.Controllers
@@ -13,15 +10,11 @@ namespace Schedule.Controllers
     [ApiController]
     public class UserController : ApiControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly WebAppContext _webAppContext;
-        private readonly ILogger<UserController> _logger;
 
-        public UserController(IConfiguration configuration, WebAppContext webAppContext, ILogger<UserController> logger)
+        public UserController(WebAppContext webAppContext)
         {
-            _configuration = configuration;
             _webAppContext = webAppContext;
-            _logger = logger;
         }
 
         [Route("api/[controller]/users")]

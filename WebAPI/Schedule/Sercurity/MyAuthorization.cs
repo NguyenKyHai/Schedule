@@ -50,53 +50,24 @@ namespace Schedule.Sercurity
             }
         }
 
-        public bool IsTokenExpired(string token)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-
-            if (jwtToken == null)
-                throw new ArgumentException("Invalid token");
-
-            var expirationDate = jwtToken.ValidTo;
-            return expirationDate < DateTime.UtcNow;
-        }
-
         public void OnAuthorization(AuthorizationFilterContext filterContext)
         {
             if (!filterContext.HttpContext.Request.Headers.ContainsKey("jwt"))
             {
-                var msg = "Header 'jwt' do not found";
+                var msg = "Header jwt do not found";
 
                 ErrorModel error = new ErrorModel();
-                error.Errors = new List<ErrorDetail> { new ErrorDetail { Name = "401", Messages = new List<string> { string.Format(msg) } } };
+                error.Errors = new List<ErrorDetail> { new ErrorDetail { Name = "401-Unauthorized", Messages = new List<string> { string.Format(msg) } } };
                 error.ErrorType = "Error";
                 filterContext.Result = new ObjectResult(new ResponseViewModel<object?>() { HasError = true, Error = error, Data = null })
                 {
                     StatusCode = 401
                 };
-
             }
-            else
+            else if (!ValidateToken(filterContext.HttpContext.Request.Headers["jwt"].ToString()))
             {
-                string token = filterContext.HttpContext.Request.Headers["jwt"].ToString();
-                if (IsTokenExpired(token))
-                {
-                    var msg = "Token is expired";
-
-                    ErrorModel error = new ErrorModel();
-                    error.Errors = new List<ErrorDetail> { new ErrorDetail { Name = "401", Messages = new List<string> { string.Format(msg) } } };
-                    error.ErrorType = "Error";
-                    filterContext.Result = new ObjectResult(new ResponseViewModel<object?>() { HasError = true, Error = error, Data = null })
-                    {
-                        StatusCode = 401
-                    };
-                }
-                else if(!ValidateToken(filterContext.HttpContext.Request.Headers["jwt"].ToString()))
-                {
-                    filterContext.Result = new ForbidResult();
-                }
+                filterContext.Result = new ForbidResult();
             }
-                    }
+        }
     }
 }

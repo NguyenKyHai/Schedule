@@ -46,14 +46,30 @@ builder.Services.AddAuthentication(options =>
         },
         OnAuthenticationFailed = context =>
         {
+
             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
             {
                 context.Response.Headers.Add("Token-Expired", "true");
-
                 Exception exTokenExpired = new("Token-Expired!");
             }
             return Task.CompletedTask;
-        }
+        }, 
+       /* OnChallenge = context =>
+        {
+            context.HandleResponse();
+
+            var payload = new JObject
+            {
+                ["error"] = context.Error,
+                ["error_description"] = context.ErrorDescription,
+                ["error_uri"] = context.ErrorUri
+            };
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = 401;
+
+            return context.Response.WriteAsync(payload.ToString());
+        }*/
     };
 });
 

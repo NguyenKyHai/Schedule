@@ -1,14 +1,13 @@
 ﻿using System.Net;
 using System.Text.Json;
-using WebApp.ViewModels;
 
 namespace Schedule.Middleware
 {
-    public class CustomForbiddenMiddleware
+    public class CustomMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public CustomForbiddenMiddleware(RequestDelegate next)
+        public CustomMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -23,6 +22,12 @@ namespace Schedule.Middleware
                 var result = JsonSerializer.Serialize(new { error = "Forbidden access" });
                 await context.Response.WriteAsync(result);
             }
+            if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+            {
+                context.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new { error = "Unauthorized access" });
+                await context.Response.WriteAsync(result);
+            }
         }
     }
 
@@ -30,7 +35,7 @@ namespace Schedule.Middleware
     {
         public static IApplicationBuilder UseCustomForbiddenMiddleware(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<CustomForbiddenMiddleware>();
+            return builder.UseMiddleware<CustomMiddleware>();
         }
     }
 }
