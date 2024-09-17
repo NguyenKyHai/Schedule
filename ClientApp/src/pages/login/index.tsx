@@ -3,12 +3,13 @@ import './index.css';
 import { postData } from "../../api/useFetch";
 import { LoginRequestModel, LoginResponseModel } from "./loginModel";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { login, LoginState, logout, selectLoginState } from "../auth/authSlice";
-import { BaseResponse } from "../../utils/responseModel";
+import { ResponseModel } from "../../utils/responseModel";
 import { isTokenExpired } from "../../utils/tokenUtil";
+import { useApiPostMutation } from "../../api/commonApi";
 
 export default function Login() {
     //const [token, setToken] = useState<string>("");
@@ -17,27 +18,31 @@ export default function Login() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const state = useAppSelector(selectLoginState);
+    const [apiPost, result] = useApiPostMutation();
     const {
         register,
         handleSubmit,
         resetField,
+        getValues,
         formState: { errors },
     } = useForm<LoginRequestModel>()
 
     const onSubmit: SubmitHandler<LoginRequestModel> = (data) => {
         setLoading(true);
-        postData<LoginRequestModel, BaseResponse<LoginResponseModel>>("login", data)
-            .then((response) => {
-                if (!response.hasError) {
-                    const data: LoginState = { ...response?.data as LoginState }
-                    dispatch(login(data))
-                } else {
-                    setError(response?.error.errors[0].messages)
-                }
-                console.log(response);
-                resetField('password')
-            })
-            .finally(() => setLoading(false))
+        // postData<LoginRequestModel, ResponseModel>("login", data)
+        //     .then((response) => {
+        //         if (!response.hasError) {
+        //             const data: LoginState = { ...response?.data as LoginState }
+        //             dispatch(login(data))
+        //         } else {
+        //             resetField('password');
+        //             setError(response.error.errors[0].messages[0])
+        //         }
+        //         console.log(response);
+        //     })
+        //     .finally(() => setLoading(false))
+
+        apiPost({ url: "login", body: data })
     }
 
     useEffect(() => {
@@ -46,7 +51,26 @@ export default function Login() {
         }
     }, [state.token])
 
+    useEffect(() => {
+        if (result.isUninitialized) {
+            return;
+        }
+        //isSuccess
+        if (result.isSuccess) {
+            if (result.data.hasError) {
+                resetField('password');
+                setError(result.data.error.errors[0].messages[0]);
+            } else {
+                const info = result?.data?.data as LoginState;
+                dispatch(login({ ...info }));
+                navigate('/schedule');
+            }
+        }
+    }, [result]);
 
+    const isLoadding = () => {
+        return result.isLoading;
+    };
 
     return (
         <>
@@ -66,7 +90,7 @@ export default function Login() {
                     <div className="form-group">
                         <button className="submit" >LOGIN</button>
                     </div>
-                    {loading && <Spinner />}
+                    {isLoadding() && <Spinner />}
                 </form>
             </div>
         </>

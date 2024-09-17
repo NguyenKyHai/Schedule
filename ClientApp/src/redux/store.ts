@@ -7,7 +7,7 @@ import {
     Middleware
 } from '@reduxjs/toolkit';
 
-// import Swal from 'sweetalert2';
+
 import { rootReducer } from './reducer';
 
 import {
@@ -21,9 +21,9 @@ import {
     REGISTER
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { commonApi } from '../api/commonApi';
 import { logout } from '../pages/auth/authSlice';
-
-
+import { toast } from 'react-toastify';
 const persistConfig = {
     key: 'root',
     version: 1,
@@ -33,25 +33,19 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const rtkQueryErrorLogger: Middleware =
-    (api: MiddlewareAPI) => (next) => (action) => {
-        if (isRejectedWithValue(action)) {
-            window.location.reload();
+export const rtkQueryErrorLogger: Middleware = (api: MiddlewareAPI) => (next) => (action: any) => {
+    if (isRejectedWithValue(action)) {
+        if (action.payload.status === 401) {
             api.dispatch(logout());
-            // if (action.payload.status == 401) {
-            //   api.dispatch(logout());
-            // } else {
-            //   Swal.fire({
-            //     html: `<p align="left">There is an exception on server!!!</p>`,
-            //     allowOutsideClick: false,
-            //     showCancelButton: false,
-            //     confirmButtonColor: "#0f0d6a",
-            //     confirmButtonText: "OK",
-            //   });
-            // }
+        } if (action.payload.status === 403) {
+            toast.warning('Forbidden access');
         }
-        return next(action);
-    };
+        else {
+            toast.error('An error occurred!');
+        }
+    }
+    return next(action);
+};
 
 export const store = configureStore({
     reducer: persistedReducer,
@@ -61,7 +55,9 @@ export const store = configureStore({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
             }
-        }).concat(rtkQueryErrorLogger)
+        })
+            .concat(commonApi.middleware)
+            .concat(rtkQueryErrorLogger)
 });
 
 export const persistor = persistStore(store);

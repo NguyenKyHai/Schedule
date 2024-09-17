@@ -3,6 +3,7 @@ import './index.css';
 import { useAppDispatch, useAppSelector } from "../../utils/hooks"
 import { logout, selectLoginState } from "../auth/authSlice"
 import { getData } from "../../api/useFetch";
+import { useApiGetQuery } from "../../api/commonApi";
 
 export interface User {
     userCD: string,
@@ -19,18 +20,20 @@ export default function Schedule() {
         'Content-Type': 'application/json',
         'jwt': state.token as string
     };
+    const result = useApiGetQuery({url:"User",id:"1"});
 
     useEffect(() => {
-        getData<User>("User/94", headers)
-            .then(response => {
-                const data: User = { ...response }
-                setUser(data);
-            })
+        // getData<User>("User/1", headers)
+        //     .then(response => {
+        //         const data: User = { ...response }
+        //         setUser(data);
+        //     })
+
     }, [])
     return (
         <>
             <div>
-                <p>SCHEDULE {`${JSON.stringify(user)}`}</p>
+                <p>SCHEDULE {`${JSON.stringify(result.data)}`}</p>
                 <button onClick={() => dispatch(logout())}>Logout</button>
             </div>
         </>
