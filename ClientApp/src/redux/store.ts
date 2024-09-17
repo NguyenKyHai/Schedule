@@ -33,14 +33,14 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const rtkQueryErrorLogger: Middleware = (api: MiddlewareAPI) => (next) => (action: any) => {
+export const rtkQueryErrorLogger: Middleware = (api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
-        if (action.payload.status === 401) {
+        const payload = action.payload as { status?: number; data?: any };
+        if (payload.status === 401) {
             api.dispatch(logout());
-        } if (action.payload.status === 403) {
+        } else if (payload.status === 403) {
             toast.warning('Forbidden access');
-        }
-        else {
+        } else {
             toast.error('An error occurred!');
         }
     }
