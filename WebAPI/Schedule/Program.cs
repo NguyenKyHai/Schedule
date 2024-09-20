@@ -6,6 +6,7 @@ using System.Text;
 using Schedule.Jwt;
 using Schedule.Sercurity;
 using Schedule.Middleware;
+using Schedule.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +76,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<JwtTokenGenerator>();
 builder.Services.AddScoped<MyAuthorization>();
+builder.Services.AddScoped<ICommonHelper, CommonHelper>();
 
 
 var app = builder.Build();

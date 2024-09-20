@@ -17,6 +17,7 @@ namespace Schedule.Controllers
             _webAppContext = webAppContext;
         }
 
+        [Authorize(Roles ="Admin")]
         [Route("api/[controller]/users")]
         [HttpGet]
         public async Task<IActionResult> Get()
