@@ -2,7 +2,7 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Box, Divider, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
+import { Box, Container, Divider, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
 import Sidebar from './Sidebar';
 import HomeIcon from '@mui/icons-material/Home';
 import Avatar from '@mui/material/Avatar';
@@ -11,7 +11,8 @@ import { Logout, Settings } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../utils/hooks';
 import { logout, selectLoginState } from '../pages/auth/authSlice';
 import { styled, useTheme } from '@mui/material/styles';
-
+import ProductCardComponent from './Cart';
+import Grid from '@mui/material/Grid2';
 
 const MyAppBar: React.FC = () => {
 
@@ -35,7 +36,7 @@ const MyAppBar: React.FC = () => {
     justifyContent: 'flex-end',
   }));
 
-  
+
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed" sx={{ background: '#4B4B4B', height: 48, justifyContent: 'center' }}>
@@ -130,7 +131,7 @@ const MyAppBar: React.FC = () => {
           Logout
         </MenuItem>
       </Menu>
-     
+
     </Box>
   );
 };
@@ -142,20 +143,21 @@ const Header: React.FC = () => {
       <MyAppBar />
       <Box component="main" sx={{ flexGrow: 1, p: 1, marginTop: '1px' }}>
         <Toolbar />
-        <Typography sx={{ marginBottom: 2 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography>
+        <Container>
+          <Box display={'flex'}>
+            <ProductCardComponent />
+            <ProductCardComponent />
+            <ProductCardComponent />
+          
+            <ProductCardComponent />
+            <ProductCardComponent />
+            <ProductCardComponent />
+          </Box>
+          <Box display={'flex'}>
+            <ProductCardComponent />
+            <ProductCardComponent />
+          </Box>
+        </Container>
       </Box>
     </Box>
   );

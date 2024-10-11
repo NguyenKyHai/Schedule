@@ -24,6 +24,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ProductCardComponent from './Cart';
+import Equipment from '../pages/equipment';
 
 const drawerWidth = 240;
 
@@ -89,7 +90,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function PersistentDrawerLeft() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -227,8 +228,7 @@ export default function PersistentDrawerLeft() {
           posuere sollicitudin aliquam ultrices sagittis orci a.
         </Typography> */}
         <Box sx={{ display: 'flex', margin: 1}}>
-          <ProductCardComponent />
-          <ProductCardComponent />
+          <Equipment />
         </Box>
 
       </Main>
