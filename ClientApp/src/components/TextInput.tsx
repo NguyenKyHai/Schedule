@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 
 export interface ITextInput {
     label: string,
@@ -6,9 +6,17 @@ export interface ITextInput {
 }
 const TextInput = (props: ITextInput) => {
     return (
-        <TextField fullWidth label={props.label} variant="outlined" size={props.size} sx={{
-            backgroundColor: 'white',
-        }} />
+        <TextField
+            fullWidth
+            id="outlined-required"
+            label={props.label}
+            variant="outlined"
+            size={props.size}
+            sx={{
+                backgroundColor: 'white',
+            }}
+        />
     )
 };
+
 export default TextInput;

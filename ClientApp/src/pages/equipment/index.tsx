@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent,
   Box,
   Button,
-  Typography
+  Typography,
+  TextField
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import TextInput from '../../components/TextInput';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DataGrid, GridColDef, GridRowClassNameParams, GridRowParams, GridRowSpacingParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowClassNameParams } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
+import EditButton from '../../components/EditButton';
+import { DatePicker } from '@mui/x-date-pickers';
+import { Dayjs } from 'dayjs';
 
 const useStyles = makeStyles({
   evenRow: {
@@ -22,13 +25,22 @@ const useStyles = makeStyles({
 });
 
 
-type Condition = 'all' | 'name' | 'category';
+type Condition = "-1" | "0" | "1";
 
 const Equipment: React.FC = () => {
 
   const classes = useStyles();
-  const [condition, setCondition] = useState<Condition>('all');
+  const [condition, setCondition] = useState<Condition>("-1");
+  const [startDate, setStartDate] = React.useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = React.useState<Dayjs | null>(null);
   const columns: GridColDef[] = [
+    {
+      field: 'edit',
+      headerName: 'Edit',
+      width: 64,
+      align: 'center',
+      renderCell: (params) => <EditButton {...params} />,
+    },
     { field: 'id', headerName: 'ID', width: 90, flex: 1, headerAlign: 'center' },
     { field: 'name', headerName: 'Name', width: 150, flex: 1, headerAlign: 'center' },
     { field: 'age', headerName: 'Age', type: 'number', width: 110, flex: 1, headerAlign: 'center' },
@@ -45,8 +57,12 @@ const Equipment: React.FC = () => {
     setCondition(event.target.value as Condition);
   };
 
+  useEffect(() => {
+    console.log('Equipment');
+  }, []);
+
   return (
-    <Container fixed>
+    <Container>
       <Box
         sx={{
           padding: 2,
@@ -62,34 +78,83 @@ const Equipment: React.FC = () => {
         alignItems="center"
       >
           <Typography variant="h5" gutterBottom sx={{ justifyContent: 'center' }}>
-            Màn hình
+            Danh sách các thiết bị
           </Typography>
         </Box>
         <Grid container spacing={2}>
-          <Grid sx={{ xs: 12, md: 3 }}>
-            <TextInput label='Text Field 1' size='small' />
+          <Grid size={{ xs: 12, md: 3 }}>
+            <TextField fullWidth
+              id="outlined-required txtEquipmentCD"
+              label='Mã thiết bị'
+              variant="outlined"
+              size='small'
+              sx={{
+                backgroundColor: 'white',
+              }} />
           </Grid>
-          <Grid sx={{ xs: 12, md: 3 }}>
-            <TextInput label='Text Field 2' size='small' />
+          <Grid size={{ xs: 12, md: 4 }}>
+            <TextField fullWidth
+              id="outlined-required txtEquipmentName"
+              label='Tên thiết bị'
+              variant="outlined"
+              size='small'
+              sx={{
+                backgroundColor: 'white',
+              }} />
           </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <TextField fullWidth
+              id="outlined-required txtGroupName"
+              label='Nhóm thiết bị'
+              variant="outlined"
+              size='small'
+              sx={{
+                backgroundColor: 'white',
+              }} />
+          </Grid>
+
         </Grid>
-        <Grid container spacing={2}>
-          <Box sx={{ width: '20%' }}>
-            <FormControl variant="outlined" margin="normal" fullWidth>
-              <InputLabel>Condition</InputLabel>
+        <Grid container spacing={2} alignItems={'center'} marginTop={2}>
+          <Grid size={{ xs: 12, md: 2 }}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Trạng thái</InputLabel>
               <Select
                 value={condition}
                 onChange={handleConditionChange}
-                label="Condition" size='small'
+                label="Condition" 
+                size='small'
                 sx={{
                   backgroundColor: 'white', width: '100%'
                 }}>
-                <MenuItem value="all">All</MenuItem>
-                <MenuItem value="name">Name</MenuItem>
-                <MenuItem value="category">Category</MenuItem>
+                <MenuItem value="-1">Tất cả</MenuItem>
+                <MenuItem value="0">Đang hoạt động</MenuItem>
+                <MenuItem value="1">Đã xóa</MenuItem>
               </Select>
             </FormControl>
-          </Box>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
+            <DatePicker
+              label="Ngày khởi tạo"
+              value={startDate}
+              onChange={(newValue: Dayjs | null) => setStartDate(newValue)}
+              slotProps={{ textField: { size: 'small' } }}
+              sx={{
+                backgroundColor: 'white'
+              }}
+            />
+          </Grid>
+          <InputLabel>~</InputLabel>
+          <Grid size={{ xs: 12, md: 2 }}>
+            <DatePicker
+              label="Ngày cập nhật"
+              value={endDate}
+              onChange={(newValue: Dayjs | null) => setEndDate(newValue)}
+              slotProps={{ textField: { size: 'small' } }}
+              sx={{
+                backgroundColor: 'white'
+              }}
+            />
+          </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Button variant="outlined" color='success' startIcon={<SearchIcon color="success" />}>

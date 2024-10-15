@@ -2,7 +2,7 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Box, Container, Divider, IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material';
+import { Box, Container, Divider, IconButton, ListItemIcon, Menu, MenuItem, TextField } from '@mui/material';
 import Sidebar from './Sidebar';
 import HomeIcon from '@mui/icons-material/Home';
 import Avatar from '@mui/material/Avatar';
@@ -11,7 +11,6 @@ import { Logout, Settings } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../utils/hooks';
 import { logout, selectLoginState } from '../pages/auth/authSlice';
 import { styled, useTheme } from '@mui/material/styles';
-import ProductCardComponent from './Cart';
 import Grid from '@mui/material/Grid2';
 
 const MyAppBar: React.FC = () => {
@@ -143,20 +142,43 @@ const Header: React.FC = () => {
       <MyAppBar />
       <Box component="main" sx={{ flexGrow: 1, p: 1, marginTop: '1px' }}>
         <Toolbar />
-        <Container>
-          <Box display={'flex'}>
-            <ProductCardComponent />
-            <ProductCardComponent />
-            <ProductCardComponent />
-          
-            <ProductCardComponent />
-            <ProductCardComponent />
-            <ProductCardComponent />
-          </Box>
-          <Box display={'flex'}>
-            <ProductCardComponent />
-            <ProductCardComponent />
-          </Box>
+        <Container
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            backgroundColor: 'lightgray',
+            padding: '16px',
+          }}
+        >
+          <Grid container spacing={2}>
+          <Grid >
+              <TextField 
+              fullWidth
+                id="outlined-required"
+                label='Mã thiết bị'
+                variant="outlined"
+                size='small'
+                sx={{
+                  backgroundColor: 'white',
+                }} />
+           
+            </Grid>
+            <Grid >
+              <TextField 
+              fullWidth
+                id="outlined-required"
+                label='Tên thiết bị'
+                variant="outlined"
+                size='small'
+                sx={{
+                  backgroundColor: 'white',
+                }} />
+                 </Grid>
+                 
+                 </Grid>
         </Container>
       </Box>
     </Box>

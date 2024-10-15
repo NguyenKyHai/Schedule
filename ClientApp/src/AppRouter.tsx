@@ -4,9 +4,11 @@ import Schedule from "./pages/schedule"
 import { PrivateRoutes } from "./pages/auth/PrivateRoutes"
 import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
-import PersistentDrawerLeft from "./components/PersistentDrawerLeft"
-import ProductCardComponent from "./components/Cart"
+import PersistentDrawerLeft from "./components/Layout"
+import ProductCardComponent from "./components/Card"
 import Equipment from "./pages/equipment"
+import Layout from "./components/Layout"
+import MyComponent from "./components/MyComponent"
 
 const AppRouter = () => {
 
@@ -18,11 +20,8 @@ const AppRouter = () => {
                         <Route path='/' element={<Header />} />
                         <Route path='/schedule' element={<Header />} />
                     </Route> */}
-                     <Route path="/" element={<Header />} />
-                     <Route path="/cart" element={<ProductCardComponent />} />
-                     <Route path="/side" element={<PersistentDrawerLeft />} />
-                     <Route path="/equipment" element={<Equipment />} />
-                    <Route path="/login" element={<Login />} />
+                     <Route path="/*" element={<Layout />} />
+                     <Route path="/header" element={<MyComponent />} />
                 </Routes>
             </BrowserRouter>
         </>
