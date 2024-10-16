@@ -1,56 +1,81 @@
 import * as React from 'react';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Grid from '@mui/material/Grid';
-import 'dayjs/locale/vi'; // Import ngôn ngữ tiếng Việt cho Dayjs
-import { Dayjs } from 'dayjs';
-import { Container } from '@mui/material';
 
-const App: React.FC = () => {
-  const [value1, setValue1] = React.useState<Dayjs | null>(null);
-  const [value2, setValue2] = React.useState<Dayjs | null>(null);
-  const [selectValue, setSelectValue] = React.useState<string>('');
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
-  return (
-    <Container>
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={3}>
-          <Select
-            value={selectValue} size='small'
-            onChange={(event) => setSelectValue(event.target.value)}
-            fullWidth
-          >
-            <MenuItem value=""><em>None</em></MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <DatePicker
-            label="Chọn ngày 1"
-            value={value1}
-            onChange={(newValue: Dayjs | null) => setValue1(newValue)}
-            slotProps={{ textField: { size: 'small' } }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <DatePicker
-            label="Chọn ngày 2"
-            value={value2}
-            onChange={(newValue: Dayjs | null) => setValue2(newValue)}
-            slotProps={{ textField: { size: 'small' } }}
-          />
-        </Grid>
-      </Grid>
-    </LocalizationProvider>
-    </Container>
-  );
+interface ModalFormProps {
+  open: boolean;
+  handleClose: () => void;
+  handleSave: (data: string) => void;
 }
 
-export default App;
+const ModalForm: React.FC<ModalFormProps> = ({ open, handleClose, handleSave }) => {
+  const [inputValue, setInputValue] = React.useState<string>('');
+
+  const handleSubmit = () => {
+    handleSave(inputValue);
+    handleClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Modal title
+        </Typography>
+        <TextField
+          label="Input"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          fullWidth
+          sx={{ mt: 2 }}
+        />
+        <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ mt: 2 }}>
+          Save changes
+        </Button>
+      </Box>
+    </Modal>
+  );
+};
+
+const MyComponent: React.FC = () => {
+  const [open, setOpen] = React.useState(false);
+  const [formData, setFormData] = React.useState<string>('');
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleSave = (data: string) => setFormData(data);
+
+  return (
+    <div>
+      <Button variant="contained" color="primary" onClick={handleOpen}>
+        Open Modal
+      </Button>
+      <Typography variant="h6" component="h2" sx={{ mt: 2 }}>
+        Data from Modal: {formData}
+      </Typography>
+      <ModalForm open={open} handleClose={handleClose} handleSave={handleSave} />
+    </div>
+  );
+};
+
+export default MyComponent;
