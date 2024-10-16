@@ -21,12 +21,11 @@ namespace Schedule.Jwt
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            string role = _commonHelper.getRole(userCd);
 
             List<Claim> claims = new List<Claim>
             {
                  new Claim(ClaimTypes.Name, userCd),
-                 new Claim(ClaimTypes.Role, role)
+                 new Claim(ClaimTypes.Role, _commonHelper.getRole(userCd))
              };
 
             var tokenDescriptor = new SecurityTokenDescriptor

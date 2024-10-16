@@ -1,21 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Schedule.Sercurity;
+using System.Security.Claims;
 
 namespace Schedule.Controllers
 {
     [ServiceFilter(typeof(MyAuthorization))]
     public class ApiControllerBase : ControllerBase
     {
-       /* protected int UserId
+        protected string role
         {
             get
             {
-                if (User != null && User.Identity != null && !string.IsNullOrEmpty(User.Identity.Name))
+                string _role = string.Empty;
+                if (User != null && User.FindFirst(ClaimTypes.Role) != null)
                 {
-                    return int.Parse(User.Identity.Name);
+                    _role =  User.FindFirst(ClaimTypes.Role).Value;
                 }
-                throw new Exception("UserId not found.");
+                 return _role;
             }
-        }*/
+        }
+
+        protected bool isAdminRole()
+        {
+            return role == "Admin";
+        }
     }
 }

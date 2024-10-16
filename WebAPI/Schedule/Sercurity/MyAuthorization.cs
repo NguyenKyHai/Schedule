@@ -54,7 +54,7 @@ namespace Schedule.Sercurity
         {
             if (!filterContext.HttpContext.Request.Headers.ContainsKey("jwt"))
             {
-                var msg = "Header jwt do not found";
+                string msg = "Header jwt do not found";
 
                 ErrorModel error = new ErrorModel();
                 error.Errors = new List<ErrorDetail> { new ErrorDetail { Name = "401-Unauthorized", Messages = new List<string> { string.Format(msg) } } };

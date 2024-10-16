@@ -20,11 +20,9 @@ namespace Schedule.Controllers
     {
         private readonly JwtTokenGenerator _jwtTokenGenerator;
         private readonly WebAppContext _webAppContext;
-        private readonly IConfiguration _configuration;
 
-        public LoginController(IConfiguration configuration, WebAppContext webAppContext, JwtTokenGenerator jwtTokenGenerator)
+        public LoginController(WebAppContext webAppContext, JwtTokenGenerator jwtTokenGenerator)
         {
-            _configuration = configuration;
             _webAppContext = webAppContext;
             _jwtTokenGenerator = jwtTokenGenerator;
         }
@@ -45,7 +43,7 @@ namespace Schedule.Controllers
 
             string token = _jwtTokenGenerator.GenerateToken(entity.UserCD);
             LoginResModel? resModel = new LoginResModel() { userName = entity.UserName1, token = token };
-            return Ok(new ResponseViewModel<LoginResModel>() { HasError = false, Data = resModel, Error = null });
+            return Ok(new ResponseViewModel<LoginResModel>() { HasError = false, Data = resModel});
         }
     }
 }

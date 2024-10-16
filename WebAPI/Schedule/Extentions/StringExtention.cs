@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Schedule.Common;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Schedule.Extentions
@@ -39,6 +40,51 @@ namespace Schedule.Extentions
 
             return Convert.ToBase64String(cipherTextBytes);
             //return Encrypt(SymmetricAlgorithmType.DES, plain, "ISV.Utilities.dll");
+        }
+
+        public static string ToFixCodeDB(this string value, FixCodeType type)
+        {
+            int lenght = GetCodeLenghtDB(type);
+
+            if (IsNumeric(value.Trim()))
+            {
+                return value.Trim().PadLeft(lenght, '0');
+            }
+
+            return value.Trim();
+        }
+
+        public static int GetCodeLenghtDB(FixCodeType type)
+        {
+            switch (type)
+            {
+                case FixCodeType.User:
+                    return 10;
+                case FixCodeType.Equipment:
+                    return 10;
+                case FixCodeType.actionTypeID:
+                    return 10;
+                default:
+                    return 10;
+            }
+        }
+
+        public static bool IsNumeric(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            foreach (char c in value)
+            {
+                if (!char.IsDigit(c))
+                {
+                    return false;
+                }
+
+            }
+            return true;
         }
     }
 }
