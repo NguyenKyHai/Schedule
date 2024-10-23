@@ -1,81 +1,98 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
+import React, { useState } from 'react';
+import { Button, Modal, Box, TextField } from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
 
-interface ModalFormProps {
-  open: boolean;
-  handleClose: () => void;
-  handleSave: (data: string) => void;
+interface DataGridModalProps {
+  onChoose: (data: any) => void;
 }
 
-const ModalForm: React.FC<ModalFormProps> = ({ open, handleClose, handleSave }) => {
-  const [inputValue, setInputValue] = React.useState<string>('');
+const rows = [
+  { id: 1, name: 'John Doe', email: 'john@example.com', age: 30, message: 'Hello!' },
+  { id: 2, name: 'Jane Smith', email: 'jane@example.com', age: 25, message: 'Hi there!' },
+  // Thêm nhiều dòng dữ liệu khác nếu cần
+];
 
-  const handleSubmit = () => {
-    handleSave(inputValue);
-    handleClose();
+const columns: GridColDef[] = [
+  { field: 'name', headerName: 'Name', width: 150 },
+  { field: 'email', headerName: 'Email', width: 200 },
+  { field: 'age', headerName: 'Age', width: 100 },
+  { field: 'message', headerName: 'Message', width: 200 },
+  {
+      field: 'choose',
+      headerName: 'Choose',
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => (
+          <Button variant="contained" onClick={() => params.api.getRow(params.id)}>
+              Choose
+          </Button>
+      ),
+  },
+];
+
+const DataGridModal: React.FC<DataGridModalProps> = ({ onChoose }) => {
+  const handleChoose = (id: number) => {
+      const selectedRow = rows.find(row => row.id === id);
+      if (selectedRow) {
+          onChoose(selectedRow);
+      }
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Modal title
-        </Typography>
-        <TextField
-          label="Input"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          fullWidth
-          sx={{ mt: 2 }}
-        />
-        <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ mt: 2 }}>
-          Save changes
-        </Button>
-      </Box>
-    </Modal>
+      <div style={{ height: 400, width: '100%' }}>
+          <DataGrid
+              rows={rows}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: 5,
+                  },
+                },
+              }} 
+              pageSizeOptions={[4]}
+              onCellClick={(params) => {
+                  if (params.field === 'choose') {
+                      handleChoose(params.id as number);
+                  }
+              }}
+          />
+      </div>
   );
 };
 
 const MyComponent: React.FC = () => {
-  const [open, setOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState<string>('');
+    const [open, setOpen] = useState(false);
+    const [selectedData, setSelectedData] = useState<any>(null);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleSave = (data: string) => setFormData(data);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
-  return (
-    <div>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
-        Open Modal
-      </Button>
-      <Typography variant="h6" component="h2" sx={{ mt: 2 }}>
-        Data from Modal: {formData}
-      </Typography>
-      <ModalForm open={open} handleClose={handleClose} handleSave={handleSave} />
-    </div>
-  );
+    const handleChoose = (data: any) => {
+        setSelectedData(data);
+        handleClose();
+    };
+
+    return (
+        <div>
+            <Button variant="contained" onClick={handleOpen}>
+                Open DataGrid Modal
+            </Button>
+            <Modal open={open} onClose={handleClose}>
+                <Box sx={{ width: 600, height: 400, margin: 'auto', marginTop: '10%' }}>
+                    <DataGridModal onChoose={handleChoose} />
+                </Box>
+            </Modal>
+            {selectedData && (
+                <Box mt={2}>
+                    <TextField label="Name" value={selectedData.name} variant="outlined" fullWidth margin="normal" />
+                    <TextField label="Email" value={selectedData.email} variant="outlined" fullWidth margin="normal" />
+                    <TextField label="Age" value={selectedData.age} variant="outlined" fullWidth margin="normal" />
+                    <TextField label="Message" value={selectedData.message} variant="outlined" fullWidth margin="normal" />
+                </Box>
+            )}
+        </div>
+    );
 };
 
 export default MyComponent;

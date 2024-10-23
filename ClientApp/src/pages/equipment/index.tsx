@@ -4,7 +4,9 @@ import {
   Box,
   Button,
   Typography,
-  TextField
+  TextField,
+  InputAdornment,
+  IconButton
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,6 +16,8 @@ import { makeStyles } from '@mui/styles';
 import EditButton from '../../components/EditButton';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
+import EquipmentSearch from '../search/equipment';
+import { Active, All, Deleted, SearchCode } from '../../commonModel/commonModel';
 
 const useStyles = makeStyles({
   evenRow: {
@@ -24,15 +28,23 @@ const useStyles = makeStyles({
   },
 });
 
-
-type Condition = "-1" | "0" | "1";
-
 const Equipment: React.FC = () => {
 
   const classes = useStyles();
-  const [condition, setCondition] = useState<Condition>("-1");
+  const [condition, setCondition] = useState<string>(All);
   const [startDate, setStartDate] = React.useState<Dayjs | null>(null);
   const [endDate, setEndDate] = React.useState<Dayjs | null>(null);
+  const [open, setOpen] = React.useState(false);
+  const [equipValues, setEquipValues] = React.useState<SearchCode>({
+    code: '',
+    name: ''
+  });
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleSelect = (data: SearchCode) => {
+    setEquipValues(data);
+  }
   const columns: GridColDef[] = [
     {
       field: 'edit',
@@ -54,7 +66,7 @@ const Equipment: React.FC = () => {
   ];
 
   const handleConditionChange = (event: SelectChangeEvent) => {
-    setCondition(event.target.value as Condition);
+    setCondition(event.target.value);
   };
 
   useEffect(() => {
@@ -86,16 +98,29 @@ const Equipment: React.FC = () => {
             <TextField fullWidth
               id="outlined-required txtEquipmentCD"
               label='Mã thiết bị'
+              value={equipValues.code}
               variant="outlined"
               size='small'
               sx={{
                 backgroundColor: 'white',
+              }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton onClick={handleOpen}>
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }} />
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
             <TextField fullWidth
               id="outlined-required txtEquipmentName"
               label='Tên thiết bị'
+              value={equipValues.name}
               variant="outlined"
               size='small'
               sx={{
@@ -110,7 +135,11 @@ const Equipment: React.FC = () => {
               size='small'
               sx={{
                 backgroundColor: 'white',
-              }} />
+              }}
+              // slotProps={{
+              //   inputLabel: {shrink: true }
+              // }}
+            />
           </Grid>
 
         </Grid>
@@ -121,14 +150,14 @@ const Equipment: React.FC = () => {
               <Select
                 value={condition}
                 onChange={handleConditionChange}
-                label="Condition" 
+                label="Condition"
                 size='small'
                 sx={{
                   backgroundColor: 'white', width: '100%'
                 }}>
-                <MenuItem value="-1">Tất cả</MenuItem>
-                <MenuItem value="0">Đang hoạt động</MenuItem>
-                <MenuItem value="1">Đã xóa</MenuItem>
+                <MenuItem value={All}>Tất cả</MenuItem>
+                <MenuItem value={Active}>Đang hoạt động</MenuItem>
+                <MenuItem value={Deleted}>Đã xóa</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -196,6 +225,7 @@ const Equipment: React.FC = () => {
           }}
         />
       </Box>
+      <EquipmentSearch open={open} handleClose={handleClose} handleSelect={handleSelect} />
     </Container>
   );
 };
