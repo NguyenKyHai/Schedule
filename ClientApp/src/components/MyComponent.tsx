@@ -1,98 +1,53 @@
-import React, { useState } from 'react';
-import { Button, Modal, Box, TextField } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-
-
-interface DataGridModalProps {
-  onChoose: (data: any) => void;
-}
-
-const rows = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', age: 30, message: 'Hello!' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', age: 25, message: 'Hi there!' },
-  // Thêm nhiều dòng dữ liệu khác nếu cần
-];
+import * as React from 'react';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box, Container } from '@mui/material';
 
 const columns: GridColDef[] = [
-  { field: 'name', headerName: 'Name', width: 150 },
-  { field: 'email', headerName: 'Email', width: 200 },
-  { field: 'age', headerName: 'Age', width: 100 },
-  { field: 'message', headerName: 'Message', width: 200 },
-  {
-      field: 'choose',
-      headerName: 'Choose',
-      width: 150,
-      renderCell: (params: GridRenderCellParams) => (
-          <Button variant="contained" onClick={() => params.api.getRow(params.id)}>
-              Choose
-          </Button>
-      ),
-  },
+    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'firstName', headerName: 'First name', minWidth: 150 },
+    { field: 'lastName', headerName: 'Last name', minWidth: 150 },
+    { field: 'age', headerName: 'Age', type: 'number', width: 110 },
+    { field: 'fullName', headerName: 'Full name', minWidth: 200 },
+    { field: 'email', headerName: 'Email' , minWidth: 500,flex: 1 },
+    { field: 'phone', headerName: 'Phone', minWidth: 150 },
+    { field: 'address', headerName: 'Address', minWidth: 250 },
+    { field: 'city', headerName: 'City', minWidth: 150 },
+    { field: 'country', headerName: 'Country', minWidth: 150 },
 ];
 
-const DataGridModal: React.FC<DataGridModalProps> = ({ onChoose }) => {
-  const handleChoose = (id: number) => {
-      const selectedRow = rows.find(row => row.id === id);
-      if (selectedRow) {
-          onChoose(selectedRow);
-      }
-  };
+const rows = [
+    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, fullName: 'Jon Snow', email: 'jon.snow@example.com', phone: '123-456-7890', address: 'Winterfell', city: 'North', country: 'Westeros' },
+    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42, fullName: 'Cersei Lannister', email: 'cersei.lannister@example.com', phone: '123-456-7891', address: 'Red Keep', city: 'King\'s Landing', country: 'Westeros' },
+    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45, fullName: 'Jaime Lannister', email: 'jaime.lannister@example.com', phone: '123-456-7892', address: 'Red Keep', city: 'King\'s Landing', country: 'Westeros' },
+    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16, fullName: 'Arya Stark', email: 'arya.stark@example.com', phone: '123-456-7893', address: 'Winterfell', city: 'North', country: 'Westeros' },
+    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null, fullName: 'Daenerys Targaryen', email: 'daenerys.targaryen@example.com', phone: '123-456-7894', address: 'Dragonstone', city: 'Dragonstone', country: 'Westeros' },
+    { id: 6, lastName: 'Melisandre', firstName: null, age: 150, fullName: 'Melisandre', email: 'melisandre@example.com', phone: '123-456-7895', address: 'Asshai', city: 'Shadowlands', country: 'Essos' },
+    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44, fullName: 'Ferrara Clifford', email: 'ferrara.clifford@example.com', phone: '123-456-7896', address: 'Braavos', city: 'Free Cities', country: 'Essos' },
+    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36, fullName: 'Rossini Frances', email: 'rossini.frances@example.com', phone: '123-456-7897', address: 'Pentos', city: 'Free Cities', country: 'Essos' },
+    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65, fullName: 'Harvey Roxie', email: 'harvey.roxie@example.com', phone: '123-456-7898', address: 'Volantis', city: 'Free Cities', country: 'Essos' },
+];
 
-  return (
-      <div style={{ height: 400, width: '100%' }}>
-          <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 5,
-                  },
-                },
-              }} 
-              pageSizeOptions={[4]}
-              onCellClick={(params) => {
-                  if (params.field === 'choose') {
-                      handleChoose(params.id as number);
-                  }
-              }}
-          />
-      </div>
-  );
-};
-
-const MyComponent: React.FC = () => {
-    const [open, setOpen] = useState(false);
-    const [selectedData, setSelectedData] = useState<any>(null);
-
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    const handleChoose = (data: any) => {
-        setSelectedData(data);
-        handleClose();
-    };
-
+export default function DataTable() {
     return (
-        <div>
-            <Button variant="contained" onClick={handleOpen}>
-                Open DataGrid Modal
-            </Button>
-            <Modal open={open} onClose={handleClose}>
-                <Box sx={{ width: 600, height: 400, margin: 'auto', marginTop: '10%' }}>
-                    <DataGridModal onChoose={handleChoose} />
-                </Box>
-            </Modal>
-            {selectedData && (
-                <Box mt={2}>
-                    <TextField label="Name" value={selectedData.name} variant="outlined" fullWidth margin="normal" />
-                    <TextField label="Email" value={selectedData.email} variant="outlined" fullWidth margin="normal" />
-                    <TextField label="Age" value={selectedData.age} variant="outlined" fullWidth margin="normal" />
-                    <TextField label="Message" value={selectedData.message} variant="outlined" fullWidth margin="normal" />
-                </Box>
-            )}
-        </div>
+        <Container>
+            <Box sx={{ display: 'flex', width: '100%' }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    checkboxSelection
+                    disableRowSelectionOnClick
+                    sx={{
+                        '& .MuiDataGrid-columnHeaders': {
+                            backgroundColor: '#f5f5f5',
+                        },
+                        '& .MuiDataGrid-cell': {
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        },
+                    }}
+                />
+            </Box>
+        </Container>
     );
-};
-
-export default MyComponent;
+}

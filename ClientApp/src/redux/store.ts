@@ -40,6 +40,8 @@ export const rtkQueryErrorLogger: Middleware = (api: MiddlewareAPI) => (next) =>
             api.dispatch(logout());
         } else if (payload.status === 403) {
             toast.warning('Forbidden access');
+        } else if (payload.status === 400) {
+            toast.warning('Status 400: Bad request');
         } else {
             toast.error('An error occurred!');
         }

@@ -20,7 +20,7 @@ export default function Schedule() {
         'Content-Type': 'application/json',
         'jwt': state.token as string
     };
-    const result = useApiGetQuery({url:"User",id:"1"});
+    const result = useApiGetQuery({url:'User/1'});
 
     useEffect(() => {
         // getData<User>("User/1", headers)

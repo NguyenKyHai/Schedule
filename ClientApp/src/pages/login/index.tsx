@@ -8,7 +8,7 @@ import Spinner from "../../components/Spinner";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { login, LoginState, logout, selectLoginState } from "../auth/authSlice";
 import { ResponseModel } from "../../utils/responseModel";
-import { isTokenExpired } from "../../utils/tokenUtil";
+import { isTokenExpired } from "../../utils/commonUtil";
 import { useApiPostMutation } from "../../api/commonApi";
 
 export default function Login() {

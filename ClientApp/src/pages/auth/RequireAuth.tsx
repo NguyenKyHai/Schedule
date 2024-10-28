@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../utils/hooks";
 import { selectLoginState } from "./authSlice";
-import { isTokenExpired } from "../../utils/tokenUtil";
+import { isTokenExpired } from "../../utils/commonUtil";
 
 export function RequireAuth({ children }: { children: JSX.Element }) {
     const state = useAppSelector(selectLoginState);

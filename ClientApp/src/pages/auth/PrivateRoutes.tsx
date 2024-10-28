@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAppSelector } from '../../utils/hooks';
 import { selectLoginState } from './authSlice';
-import { isTokenExpired } from '../../utils/tokenUtil';
+import { isTokenExpired } from '../../utils/commonUtil';
 import { toast } from 'react-toastify';
 
 export const PrivateRoutes = () => {

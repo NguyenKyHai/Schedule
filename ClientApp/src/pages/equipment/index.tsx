@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
   Container, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent,
   Box,
@@ -18,6 +18,9 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
 import EquipmentSearch from '../search/equipment';
 import { Active, All, Deleted, SearchCode } from '../../commonModel/commonModel';
+import { useApiGetQuery } from '../../api/commonApi';
+import { EquipmentSearchModel, initEquipmentSearch } from './equipmentModel';
+import { formatDateTime } from '../../utils/commonUtil';
 
 const useStyles = makeStyles({
   evenRow: {
@@ -29,21 +32,15 @@ const useStyles = makeStyles({
 });
 
 const Equipment: React.FC = () => {
-
+  const equipList = useApiGetQuery({ url: 'equipment/all' });
   const classes = useStyles();
-  const [condition, setCondition] = useState<string>(All);
-  const [startDate, setStartDate] = React.useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = React.useState<Dayjs | null>(null);
   const [open, setOpen] = React.useState(false);
-  const [equipValues, setEquipValues] = React.useState<SearchCode>({
-    code: '',
-    name: ''
-  });
+  const [equipValues, setEquipValues] = React.useState<EquipmentSearchModel>(initEquipmentSearch);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleSelect = (data: SearchCode) => {
-    setEquipValues(data);
+    setEquipValues({ ...equipValues, equipmentCD: data.code, equipmentName: data.name });
   }
   const columns: GridColDef[] = [
     {
@@ -53,25 +50,51 @@ const Equipment: React.FC = () => {
       align: 'center',
       renderCell: (params) => <EditButton {...params} />,
     },
-    { field: 'id', headerName: 'ID', width: 90, flex: 1, headerAlign: 'center' },
-    { field: 'name', headerName: 'Name', width: 150, flex: 1, headerAlign: 'center' },
-    { field: 'age', headerName: 'Age', type: 'number', width: 110, flex: 1, headerAlign: 'center' },
-    { field: 'address', headerName: 'Address', width: 160, flex: 1, headerAlign: 'center' },
+    { field: 'equipmentCD', headerName: 'Mã thiết bị', headerAlign: 'center', minWidth: 120, flex: 1 },
+    { field: 'equipmentName', headerName: 'Tên thiết bị', headerAlign: 'center', minWidth: 250, flex: 1 },
+    { field: 'groupName', headerName: 'Nhóm thiết bị', headerAlign: 'center', minWidth: 250, flex: 1 },
+    {
+      field: 'statusFlag',
+      headerName: 'Trạng thái',
+      headerAlign: 'center',
+      minWidth: 140,
+      flex: 1,
+      valueGetter: (value) => { return value === 0 ? 'Đang hoạt động' : 'Đã xóa' },
+    },
+    {
+      field: 'createDate',
+      headerName: 'Ngày tạo',
+      headerAlign: 'center',
+      minWidth: 170,
+      flex: 1,
+      valueGetter: (value) => { return formatDateTime(value) },
+    },
+    {
+      field: 'updateDate',
+      headerName: 'Ngày cập nhật',
+      headerAlign: 'center',
+      minWidth: 170,
+      flex: 1,
+      valueGetter: (value) => { return formatDateTime(value) },
+    },
+    { field: 'createUID', headerName: 'Người tạo', headerAlign: 'center', minWidth: 120, flex: 1 },
+    { field: 'updateUID', headerName: 'Người cập nhật', headerAlign: 'center', minWidth: 120, flex: 1 },
   ];
 
-  const rows = [
-    { id: 1, name: 'John Doe', age: 35, address: '123 Main St' },
-    { id: 2, name: 'Jane Smith', age: 42, address: '456 Maple Ave' },
-    { id: 3, name: 'Alice Johnson', age: 28, address: '789 Oak Dr' },
-  ];
+  const row = [{ id: 1, name: 'John' }, { id: 2, name: 'Tom' }]
 
-  const handleConditionChange = (event: SelectChangeEvent) => {
-    setCondition(event.target.value);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEquipValues({
+      ...equipValues,
+      [name]: value,
+    });
   };
 
   useEffect(() => {
     console.log('Equipment');
-  }, []);
+    console.log(equipList);
+  }, [equipList]);
 
   return (
     <Container>
@@ -98,9 +121,11 @@ const Equipment: React.FC = () => {
             <TextField fullWidth
               id="outlined-required txtEquipmentCD"
               label='Mã thiết bị'
-              value={equipValues.code}
+              name="equipmentCD"
+              value={equipValues.equipmentCD}
               variant="outlined"
               size='small'
+              onChange={handleChange}
               sx={{
                 backgroundColor: 'white',
               }}
@@ -120,9 +145,11 @@ const Equipment: React.FC = () => {
             <TextField fullWidth
               id="outlined-required txtEquipmentName"
               label='Tên thiết bị'
-              value={equipValues.name}
+              name="equipmentName"
+              value={equipValues.equipmentName}
               variant="outlined"
               size='small'
+              onChange={handleChange}
               sx={{
                 backgroundColor: 'white',
               }} />
@@ -131,27 +158,33 @@ const Equipment: React.FC = () => {
             <TextField fullWidth
               id="outlined-required txtGroupName"
               label='Nhóm thiết bị'
+              name="groupName"
+              value={equipValues.groupName}
               variant="outlined"
               size='small'
+              onChange={handleChange}
               sx={{
                 backgroundColor: 'white',
               }}
-              // slotProps={{
-              //   inputLabel: {shrink: true }
-              // }}
+            // slotProps={{
+            //   inputLabel: {shrink: true }
+            // }}
             />
           </Grid>
 
         </Grid>
         <Grid container spacing={2} alignItems={'center'} marginTop={2}>
           <Grid size={{ xs: 12, md: 2 }}>
-            <FormControl variant="outlined" fullWidth>
+            <FormControl variant="outlined" fullWidth size="small">
               <InputLabel>Trạng thái</InputLabel>
               <Select
-                value={condition}
-                onChange={handleConditionChange}
+                value={equipValues.statusFlag}
+                onChange={(event: SelectChangeEvent) => setEquipValues({
+                  ...equipValues,
+                  statusFlag: event.target.value,
+                })}
+                name="statusFlag"
                 label="Condition"
-                size='small'
                 sx={{
                   backgroundColor: 'white', width: '100%'
                 }}>
@@ -163,9 +196,12 @@ const Equipment: React.FC = () => {
           </Grid>
           <Grid size={{ xs: 12, md: 2 }}>
             <DatePicker
-              label="Ngày khởi tạo"
-              value={startDate}
-              onChange={(newValue: Dayjs | null) => setStartDate(newValue)}
+              label="Ngày tạo"
+              value={equipValues.createDate}
+              onChange={(newValue: Dayjs | null) => setEquipValues({
+                ...equipValues,
+                createDate: newValue
+              })}
               slotProps={{ textField: { size: 'small' } }}
               sx={{
                 backgroundColor: 'white'
@@ -176,27 +212,74 @@ const Equipment: React.FC = () => {
           <Grid size={{ xs: 12, md: 2 }}>
             <DatePicker
               label="Ngày cập nhật"
-              value={endDate}
-              onChange={(newValue: Dayjs | null) => setEndDate(newValue)}
+              value={equipValues.updateDate}
+              onChange={(newValue: Dayjs | null) => setEquipValues({
+                ...equipValues,
+                updateDate: newValue
+              })}
               slotProps={{ textField: { size: 'small' } }}
               sx={{
                 backgroundColor: 'white'
               }}
             />
           </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
+            <FormControl variant="outlined" fullWidth size="small">
+              <InputLabel>Người tạo</InputLabel>
+              <Select
+                name="createUID"
+                value={equipValues.createUID}
+                onChange={(event: SelectChangeEvent) => setEquipValues({
+                  ...equipValues,
+                  createUID: event.target.value,
+                })}
+                label="Create user"
+                sx={{
+                  backgroundColor: 'white', width: '100%'
+                }}>
+                {row?.map((item: any) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
+            <FormControl variant="outlined" fullWidth size="small">
+              <InputLabel>Người cập nhật</InputLabel>
+              <Select
+                name="updateUID"
+                value={equipValues.updateUID}
+                onChange={(event: SelectChangeEvent) => setEquipValues({
+                  ...equipValues,
+                  updateUID: event.target.value,
+                })}
+                label="Update User"
+                sx={{
+                  backgroundColor: 'white', width: '100%'
+                }}>
+                {row?.map((item: any) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
-          <Button variant="outlined" color='success' startIcon={<SearchIcon color="success" />}>
+          <Button variant="outlined" color='success' startIcon={<SearchIcon color="success" />} onClick={() => setEquipValues(initEquipmentSearch)}>
             Search
           </Button>
-          <Button variant="outlined" startIcon={<DeleteIcon color="primary" />}>
+          <Button variant="outlined" startIcon={<DeleteIcon color="primary" />} onClick={() => setEquipValues(initEquipmentSearch)}>
             Clear
           </Button>
         </Grid>
       </Box>
-      <Box sx={{ width: '100%' }}>
+      <div style={{ display: 'flex', width: '100%', overflow: 'auto' }}>
         <DataGrid
-          rows={rows}
+          rows={equipList.data?.data}
           columns={columns}
           initialState={{
             pagination: {
@@ -207,6 +290,7 @@ const Equipment: React.FC = () => {
           }}
           pageSizeOptions={[4]}
           checkboxSelection
+          loading={equipList.isLoading}
           disableRowSelectionOnClick
           getRowClassName={(params: GridRowClassNameParams) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? classes.evenRow : classes.oddRow
@@ -224,7 +308,7 @@ const Equipment: React.FC = () => {
             },
           }}
         />
-      </Box>
+      </div>
       <EquipmentSearch open={open} handleClose={handleClose} handleSelect={handleSelect} />
     </Container>
   );

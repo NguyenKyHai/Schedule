@@ -18,10 +18,10 @@ export const commonApi = createApi({
         }
     }),
     endpoints: (builder) => ({
-    apiGet: builder.query<ResponseModel, { url: string; id: string }>({
-      query: ({ url, id }) => {
+    apiGet: builder.query<ResponseModel, { url: string}>({
+      query: ({ url }) => {
         return {
-          url: `${url.toLowerCase()}/${id}`,
+          url: `${url.toLowerCase()}`,
           method: "GET",
         };
       },
