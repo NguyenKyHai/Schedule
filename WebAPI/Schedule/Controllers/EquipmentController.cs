@@ -28,9 +28,9 @@ namespace Schedule.Controllers
         {
             if (isAdminRole())
             {
-                return Ok(await _webAppContext.Equipments.ToListAsync());
+                return MakeOk<List<EquipmentEntity>>(await _webAppContext.Equipments.ToListAsync());
             }
-            return Ok(await _webAppContext.Equipments.Where(e => e.StatusFlag == 0).ToListAsync());
+            return MakeOk<List<EquipmentEntity>>(await _webAppContext.Equipments.Where(e => e.StatusFlag == 0).ToListAsync());
         }
 
         [HttpGet]
@@ -44,7 +44,8 @@ namespace Schedule.Controllers
                 res = res.Where(e => e.StatusFlag == 0);
             }
 
-            return Ok(await res.FirstOrDefaultAsync());
+            EquipmentEntity? model = await res.FirstOrDefaultAsync();
+            return MakeOk<EquipmentEntity>(model);
         }
 
         [HttpPut]
