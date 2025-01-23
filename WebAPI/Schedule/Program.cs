@@ -79,8 +79,8 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddGoogle(options =>
 {
-    options.ClientId = "793406760016-ne10lu6rpi3iorbf4lg3fv890u2s2837.apps.googleusercontent.com";
-    options.ClientSecret = "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";
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
     options.CallbackPath = "/signin-google";
 });
 
