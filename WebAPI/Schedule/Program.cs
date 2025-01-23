@@ -7,6 +7,8 @@ using Schedule.Jwt;
 using Schedule.Sercurity;
 using Schedule.Middleware;
 using Schedule.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +25,8 @@ builder.Services.AddDbContext<WebAppContext>(opt => opt.UseSqlServer(builder.Con
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
@@ -72,6 +75,13 @@ builder.Services.AddAuthentication(options =>
             return context.Response.WriteAsync(payload.ToString());
         }*/
     };
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = "793406760016-ne10lu6rpi3iorbf4lg3fv890u2s2837.apps.googleusercontent.com";
+    options.ClientSecret = "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";
+    options.CallbackPath = "/signin-google";
 });
 
 builder.Services.AddScoped<JwtTokenGenerator>();
